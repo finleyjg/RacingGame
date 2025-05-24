@@ -15,7 +15,7 @@ public class BestTimeDisplay : MonoBehaviour
         }
         else
         {
-            bestTimeText.text = "Best Time: " + TimeFormatter.FormatTime(bestTime);
+            bestTimeText.text = "Best time: " + TimeFormatter.FormatTime(bestTime);
         }
     }
 }

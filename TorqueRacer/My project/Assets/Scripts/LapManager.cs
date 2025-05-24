@@ -30,15 +30,17 @@ public class LapManager : MonoBehaviour
                 float finishTime = RaceUIManager.Instance.GetRaceTime();
                 float bestTime = PlayerPrefs.GetFloat("BestRaceTime", float.MaxValue);
 
-                //saves the finish time so it can be displayed in Race Summary scene
-                PlayerPrefs.SetFloat("LastRaceTime", finishTime);
-                PlayerPrefs.Save();
+                Debug.Log($"Saving LastRaceTime: {finishTime}");
+                Debug.Log($"BestRaceTime currently: {bestTime}");
 
+
+                //save the latest race time
+                PlayerPrefs.SetFloat("LastRaceTime", finishTime);
+
+                //update best time if the new time is better
                 if (finishTime < bestTime)
                 {
                     PlayerPrefs.SetFloat("BestRaceTime", finishTime);
-                    //PlayerPrefs.DeleteKey("BestRaceTime");
-                    PlayerPrefs.Save();
                     Debug.Log($"New Best Time: {RaceUIManager.Instance.FormatTime(finishTime)}");
                 }
                 else
@@ -46,9 +48,12 @@ public class LapManager : MonoBehaviour
                     Debug.Log($"Finish time: {RaceUIManager.Instance.FormatTime(finishTime)} (Best: {RaceUIManager.Instance.FormatTime(bestTime)})");
                 }
 
+                PlayerPrefs.Save();
+
                 Debug.Log("Win");
                 SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
             }
+
         }
     }
 
@@ -65,4 +70,12 @@ public class LapManager : MonoBehaviour
             return checkpoints[index].transform.rotation;
         return Quaternion.identity;
     }
+
+    public void ResetBestTime()
+    {
+        PlayerPrefs.DeleteKey("BestRaceTime");
+        PlayerPrefs.Save();
+    }
+
+
 }
