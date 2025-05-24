@@ -3,6 +3,9 @@ using System.Collections;
 
 public class CarControlScript : MonoBehaviour
 {
+    public int lapNumber;
+    public int checkpointIndex;
+
     private float maxTorque = 1000;  
     private float maxSteerAngle = 20;
     private float driftFactor = 0.75f; //lower drift factor makes turning feel more natural and intuitive, compared to higher factors.
@@ -28,6 +31,9 @@ public class CarControlScript : MonoBehaviour
 
     void Start()
     {
+        lapNumber = 1;
+        checkpointIndex = 0;
+
         rb = GetComponent<Rigidbody>();
         rb.centerOfMass = new Vector3(0, -0.5f, 0);
 
@@ -171,6 +177,11 @@ public class CarControlScript : MonoBehaviour
 
     void Update()
     {
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            RespawnAtCheckpoint();
+        }
+
         UpdateWheelSpin(WheelFL, WheelFLTrans);
         UpdateWheelSpin(WheelFR, WheelFRTrans);
         UpdateWheelSpin(WheelRL, WheelRLTrans);
@@ -186,6 +197,33 @@ public class CarControlScript : MonoBehaviour
         trans.position = pos;
         trans.rotation = rot;
     }
+
+    void RespawnAtCheckpoint()
+    {
+        if (checkpointIndex == 0)
+        {
+            Debug.Log("no respawn allowed, checkpoint not reached.");
+            return;
+        }
+
+        int respawnIndex = checkpointIndex - 1;
+
+        Vector3 pos = LapManager.Instance.GetCheckpointPosition(respawnIndex);
+        Quaternion rot = LapManager.Instance.GetCheckpointRotation(respawnIndex);
+
+        transform.position = pos;
+        transform.rotation = rot;
+
+        Rigidbody rb = GetComponent<Rigidbody>();
+        if (rb)
+        {
+            rb.velocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+        }
+
+        Debug.Log($"Respawned at checkpoint {respawnIndex}");
+    }
+
 
 }
 
